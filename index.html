@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infolore - Landing Page Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            color: #00d4ff;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+
+        .btn-primary:hover {
+            background: #00b8e6;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .admin-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .panel-card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-card h2 {
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #2d3748;
+            border-radius: 6px;
+            background: #0f1419;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .saved-pages {
+            list-style: none;
+        }
+
+        .page-item {
+            background: #0f1419;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-item-info h3 {
+            color: #00d4ff;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-item-info p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .page-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Landing Page Styles */
+        .landing-page {
+            min-height: 100vh;
+        }
+
+        .landing-hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            opacity: 0.95;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .landing-form {
+            max-width: 600px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .landing-form h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .landing-form input {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .landing-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .landing-form button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .landing-form button:hover {
+            background: var(--secondary-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Panel View -->
+    <div id="adminView" class="admin-panel">
+        <div class="admin-header">
+            <h1>Infolore Landing Creator</h1>
+            <button class="btn btn-secondary" onclick="viewAllPages()">View All Pages</button>
+        </div>
+        
+        <div class="admin-content">
+            <div class="panel-card">
+                <h2>Create New Landing Page</h2>
+                <form id="pageForm">
+                    <div class="form-group">
+                        <label>Page Slug (URL)</label>
+                        <input type="text" id="slug" placeholder="e.g., demo-webinar" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Headline</label>
+                        <input type="text" id="headline" placeholder="Your Powerful Headline" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Subheadline</label>
+                        <textarea id="subheadline" placeholder="Supporting text that explains your offer"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>CTA Button Text</label>
+                        <input type="text" id="ctaText" placeholder="Get Started Now" required>
+                    </div>
+                    
+                    <div class="form-group color-picker-group">
+                        <div>
+                            <label>Primary Color</label>
+                            <input type="color" id="primaryColor" value="#6366f1">
+                        </div>
+                        <div>
+                            <label>Secondary Color</label>
+                            <input type="color" id="secondaryColor" value="#8b5cf6">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        Create Landing Page
+                    </button>
+                </form>
+            </div>
+            
+            <div class="panel-card">
+                <h2>Saved Pages</h2>
+                <ul id="pagesList" class="saved-pages">
+                    <li style="color: #a0a0a0; text-align: center; padding: 2rem;">No pages created yet</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Page View -->
+    <div id="landingView" class="landing-page hidden">
+        <div class="landing-hero">
+            <div class="hero-content">
+                <h1 id="displayHeadline"></h1>
+                <p id="displaySubheadline"></p>
+                <a href="#contact" class="cta-button" id="displayCTA"></a>
+            </div>
+        </div>
+        
+        <div class="landing-form" id="contact">
+            <h2>Get Started Today</h2>
+            <form onsubmit="return handleLeadSubmit(event)">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <input type="text" placeholder="Company Name">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let pages = {};
+        let currentView = 'admin';
+
+        // Load pages from memory
+        function loadPages() {
+            const stored = localStorage.getItem('infolorePages');
+            if (stored) {
+                pages = JSON.parse(stored);
+                renderPagesList();
+            }
+        }
+
+        // Save pages to memory
+        function savePages() {
+            localStorage.setItem('infolorePages', JSON.stringify(pages));
+        }
+
+        // Create new page
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            console.log('Form submitted');
+            
+            try {
+                const slug = document.getElementById('slug').value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+                const pageData = {
+                    slug: slug,
+                    headline: document.getElementById('headline').value,
+                    subheadline: document.getElementById('subheadline').value,
+                    ctaText: document.getElementById('ctaText').value,
+                    primaryColor: document.getElementById('primaryColor').value,
+                    secondaryColor: document.getElementById('secondaryColor').value,
+                    created: new Date().toISOString()
+                };
+                
+                console.log('Creating page:', pageData);
+                pages[slug] = pageData;
+                savePages();
+                renderPagesList();
+                
+                // Reset form
+                e.target.reset();
+                
+                // Show success message
+                alert('Landing page created! Click "View" to see it.');
+            } catch (error) {
+                console.error('Error creating page:', error);
+                alert('Error creating page. Check console for details.');
+            }
+        }
+        
+        document.getElementById('pageForm').addEventListener('submit', handleFormSubmit);
+
+        // Render pages list
+        function renderPagesList() {
+            const list = document.getElementById('pagesList');
+            const pageKeys = Object.keys(pages);
+            
+            if (pageKeys.length === 0) {
+                list.innerHTML = '<li style="color: #a0a0a0; text-align: center; padding: 2rem;">No pages created yet</li>';
+                return;
+            }
+            
+            list.innerHTML = pageKeys.map(slug => {
+                const page = pages[slug];
+                return `
+                    <li class="page-item">
+                        <div class="page-item-info">
+                            <h3>${page.headline}</h3>
+                            <p>/${page.slug}</p>
+                        </div>
+                        <div class="page-item-actions">
+                            <button class="btn btn-primary btn-small" onclick="viewPage('${slug}')">View</button>
+                            <button class="btn btn-secondary btn-small" onclick="copyUrl('${slug}')">Copy URL</button>
+                            <button class="btn btn-secondary btn-small" onclick="deletePage('${slug}')">Delete</button>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // View specific page
+        function viewPage(slug) {
+            const page = pages[slug];
+            if (!page) return;
+            
+            // Update landing page content
+            document.getElementById('displayHeadline').textContent = page.headline;
+            document.getElementById('displaySubheadline').textContent = page.subheadline;
+            document.getElementById('displayCTA').textContent = page.ctaText;
+            
+            // Update colors
+            const landingView = document.getElementById('landingView');
+            landingView.style.setProperty('--primary-color', page.primaryColor);
+            landingView.style.setProperty('--secondary-color', page.secondaryColor);
+            
+            // Switch views
+            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('landingView').classList.remove('hidden');
+            currentView = 'landing';
+            
+            // Update URL
+            window.location.hash = slug;
+        }
+
+        // View all pages (back to admin)
+        function viewAllPages() {
+            document.getElementById('landingView').classList.add('hidden');
+            document.getElementById('adminView').classList.remove('hidden');
+            currentView = 'admin';
+            window.location.hash = '';
+        }
+
+        // Copy URL
+        function copyUrl(slug) {
+            const url = window.location.origin + window.location.pathname + '#' + slug;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!\n' + url);
+            });
+        }
+
+        // Delete page
+        function deletePage(slug) {
+            if (confirm('Are you sure you want to delete this page?')) {
+                delete pages[slug];
+                savePages();
+                renderPagesList();
+            }
+        }
+
+        // Handle lead form submission
+        function handleLeadSubmit(e) {
+            e.preventDefault();
+            alert('Thank you! Your information has been submitted.\n\n(In production, this would send to your CRM)');
+            e.target.reset();
+            return false;
+        }
+
+        // Handle URL hash navigation
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.slice(1);
+            if (hash && pages[hash]) {
+                viewPage(hash);
+            } else if (!hash) {
+                viewAllPages();
+            }
+        });
+
+        // Initialize
+        loadPages();
+        
+        // Check if there's a hash on load
+        const initialHash = window.location.hash.slice(1);
+        if (initialHash && pages[initialHash]) {
+            viewPage(initialHash);
+        }
+    </script>
+</body>
+</html>
