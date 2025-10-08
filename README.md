@@ -34,18 +34,6 @@ A single-file, client-side landing page generator designed for cold calling camp
 3. Click "Create Landing Page"
 4. Your page is created instantly
 
-### Viewing a Landing Page
-
-1. Click "View" next to any saved page
-2. Or share the URL directly: `your-site.com#page-slug`
-
-### Sharing with Prospects
-
-1. Click "Copy URL" next to any page
-2. Share the link via email, LinkedIn, or during calls
-3. Each prospect gets their personalized page
-
-## Technical Details
 
 ### Technology Stack
 
@@ -54,17 +42,6 @@ A single-file, client-side landing page generator designed for cold calling camp
 - LocalStorage for data persistence
 - Hash-based routing for page navigation
 
-### Browser Compatibility
-
-- Chrome 60+
-- Firefox 55+
-- Safari 11+
-- Edge 79+
-
-### Data Storage
-
-Pages are stored in the browser's localStorage. Data persists across sessions but is limited to the specific browser and device where pages were created.
-
 ### Limitations
 
 - localStorage has a ~5-10MB limit (sufficient for thousands of pages)
@@ -72,15 +49,5 @@ Pages are stored in the browser's localStorage. Data persists across sessions bu
 - Clearing browser data will delete saved pages
 - No backend analytics or form submissions (frontend only)
 
-## Future Enhancements
 
-Potential features to add:
-
-- Export pages as JSON backup
-- Import previously saved pages
-- Analytics integration (Google Analytics, etc.)
-- Form submission to external services (Zapier, webhooks)
-- More template designs
-- Image upload support
-- Video embed options
 
