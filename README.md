@@ -14,7 +14,7 @@ A single-file, client-side landing page generator designed for cold calling camp
 
 ## Use Cases
 
-- Personalized landing pages for cold call prospects
+- Personalised landing pages for cold call prospects
 - Custom pages for LinkedIn outreach campaigns
 - Quick demo pages for sales presentations
 - A/B testing different messaging
@@ -30,7 +30,7 @@ A single-file, client-side landing page generator designed for cold calling camp
    - **Headline**: Main headline for your page
    - **Subheadline**: Supporting text
    - **CTA Button Text**: Call-to-action button text
-   - **Colors**: Choose primary and secondary colors
+   - **Colours**: Choose primary and secondary colours
 3. Click "Create Landing Page"
 4. Your page is created instantly
 
