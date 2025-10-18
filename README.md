@@ -1,3 +1,5 @@
+It has bugs. I will fix them. 
+
 # Infolore Landing Page Creator
 
 A single-file, client-side landing page generator designed for cold calling campaigns and LinkedIn outreach. Create unlimited personalized landing pages in seconds without any backend infrastructure.
