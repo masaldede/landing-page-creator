@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -162,6 +160,7 @@
         .page-item-actions {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .btn-small {
@@ -297,6 +296,21 @@
             .hero-content p {
                 font-size: 1.25rem;
             }
+            
+            .landing-form {
+                margin: 2rem 1rem;
+                padding: 1.5rem;
+            }
+            
+            .page-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .page-item-actions {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -305,7 +319,7 @@
     <div id="adminView" class="admin-panel">
         <div class="admin-header">
             <h1>Infolore Landing Creator</h1>
-            <button class="btn btn-secondary" onclick="viewAllPages()">View All Pages</button>
+            <button class="btn btn-secondary" id="viewAllPagesBtn">View All Pages</button>
         </div>
         
         <div class="admin-content">
@@ -370,7 +384,7 @@
         
         <div class="landing-form" id="contact">
             <h2>Get Started Today</h2>
-            <form onsubmit="return handleLeadSubmit(event)">
+            <form id="leadForm">
                 <input type="text" placeholder="Your Name" required>
                 <input type="email" placeholder="Your Email" required>
                 <input type="tel" placeholder="Phone Number" required>
@@ -385,27 +399,57 @@
         let pages = {};
         let currentView = 'admin';
 
-        // Load pages from memory
+        // Sanitize slug to prevent XSS
+        function sanitizeSlug(slug) {
+            return slug.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load pages from localStorage
         function loadPages() {
-            const stored = localStorage.getItem('infolorePages');
-            if (stored) {
-                pages = JSON.parse(stored);
-                renderPagesList();
+            try {
+                const stored = localStorage.getItem('infolorePages');
+                if (stored) {
+                    pages = JSON.parse(stored);
+                    renderPagesList();
+                }
+            } catch (error) {
+                console.error('Error loading pages:', error);
+                pages = {};
             }
         }
 
-        // Save pages to memory
+        // Save pages to localStorage
         function savePages() {
-            localStorage.setItem('infolorePages', JSON.stringify(pages));
+            try {
+                localStorage.setItem('infolorePages', JSON.stringify(pages));
+            } catch (error) {
+                console.error('Error saving pages:', error);
+                alert('Error saving page. Storage might be full.');
+            }
         }
 
         // Create new page
         function handleFormSubmit(e) {
             e.preventDefault();
-            console.log('Form submitted');
             
             try {
-                const slug = document.getElementById('slug').value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+                const slug = sanitizeSlug(document.getElementById('slug').value);
+                
+                if (!slug) {
+                    alert('Please enter a valid slug');
+                    return;
+                }
+                
                 const pageData = {
                     slug: slug,
                     headline: document.getElementById('headline').value,
@@ -416,23 +460,21 @@
                     created: new Date().toISOString()
                 };
                 
-                console.log('Creating page:', pageData);
                 pages[slug] = pageData;
                 savePages();
                 renderPagesList();
                 
-                // Reset form: 
+                // Reset form with default colors
                 e.target.reset();
+                document.getElementById('primaryColor').value = '#6366f1';
+                document.getElementById('secondaryColor').value = '#8b5cf6';
                 
-                // Show success message
                 alert('Landing page created! Click "View" to see it.');
             } catch (error) {
                 console.error('Error creating page:', error);
-                alert('Error creating page. Check console for details.');
+                alert('Error creating page. Please try again.');
             }
         }
-        
-        document.getElementById('pageForm').addEventListener('submit', handleFormSubmit);
 
         // Render pages list
         function renderPagesList() {
@@ -444,22 +486,27 @@
                 return;
             }
             
-            list.innerHTML = pageKeys.map(slug => {
+            list.innerHTML = '';
+            
+            pageKeys.forEach(slug => {
                 const page = pages[slug];
-                return `
-                    <li class="page-item">
-                        <div class="page-item-info">
-                            <h3>${page.headline}</h3>
-                            <p>/${page.slug}</p>
-                        </div>
-                        <div class="page-item-actions">
-                            <button class="btn btn-primary btn-small" onclick="viewPage('${slug}')">View</button>
-                            <button class="btn btn-secondary btn-small" onclick="copyUrl('${slug}')">Copy URL</button>
-                            <button class="btn btn-secondary btn-small" onclick="deletePage('${slug}')">Delete</button>
-                        </div>
-                    </li>
+                const li = document.createElement('li');
+                li.className = 'page-item';
+                
+                li.innerHTML = `
+                    <div class="page-item-info">
+                        <h3>${escapeHtml(page.headline)}</h3>
+                        <p>/${escapeHtml(page.slug)}</p>
+                    </div>
+                    <div class="page-item-actions">
+                        <button class="btn btn-primary btn-small" data-action="view" data-slug="${escapeHtml(slug)}">View</button>
+                        <button class="btn btn-secondary btn-small" data-action="copy" data-slug="${escapeHtml(slug)}">Copy URL</button>
+                        <button class="btn btn-secondary btn-small" data-action="delete" data-slug="${escapeHtml(slug)}">Delete</button>
+                    </div>
                 `;
-            }).join('');
+                
+                list.appendChild(li);
+            });
         }
 
         // View specific page
@@ -497,9 +544,26 @@
         // Copy URL
         function copyUrl(slug) {
             const url = window.location.origin + window.location.pathname + '#' + slug;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('URL copied to clipboard!\n' + url);
-            });
+            
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    alert('URL copied to clipboard!\n' + url);
+                })
+                .catch(err => {
+                    console.error('Failed to copy:', err);
+                    // Fallback for older browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        alert('URL copied to clipboard!\n' + url);
+                    } catch (e) {
+                        alert('Copy failed. URL: ' + url);
+                    }
+                    document.body.removeChild(textarea);
+                });
         }
 
         // Delete page
@@ -529,14 +593,46 @@
             }
         });
 
-        // Initialize
-        loadPages();
-        
-        // Check if there's a hash on load
-        const initialHash = window.location.hash.slice(1);
-        if (initialHash && pages[initialHash]) {
-            viewPage(initialHash);
-        }
+        // Event delegation for page list buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('[data-action]')) {
+                const action = e.target.dataset.action;
+                const slug = e.target.dataset.slug;
+                
+                switch(action) {
+                    case 'view':
+                        viewPage(slug);
+                        break;
+                    case 'copy':
+                        copyUrl(slug);
+                        break;
+                    case 'delete':
+                        deletePage(slug);
+                        break;
+                }
+            }
+        });
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved pages
+            loadPages();
+            
+            // Setup form handler
+            document.getElementById('pageForm').addEventListener('submit', handleFormSubmit);
+            
+            // Setup view all pages button
+            document.getElementById('viewAllPagesBtn').addEventListener('click', viewAllPages);
+            
+            // Setup lead form handler
+            document.getElementById('leadForm').addEventListener('submit', handleLeadSubmit);
+            
+            // Check if there's a hash on load
+            const initialHash = window.location.hash.slice(1);
+            if (initialHash && pages[initialHash]) {
+                viewPage(initialHash);
+            }
+        });
     </script>
 </body>
 </html>
